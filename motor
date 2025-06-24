@@ -15,7 +15,8 @@ int steps[4][4] = {
 const int passosPorRevolucao = 48; // 48 passos = 360° (7.5° por passo)
 int currentStep = 0;
 int anguloAtual = 0;
-int incrementoAngulo = 90; // Coleta a cada 30°
+int incrementoAngulo = 360; // Coleta a cada 30°
+int contagem = 0;
 
 void setup() {
   pinMode(IN1, OUTPUT);
@@ -26,7 +27,7 @@ void setup() {
 }
 
 void loop() {
-  if (anguloAtual <= 360) {
+  if ((anguloAtual < 360) && (contagem < 10)) {
     // Calcula quantos passos para o incremento desejado
     int passosNecessarios = (incrementoAngulo * passosPorRevolucao) / 360;
     
@@ -34,14 +35,11 @@ void loop() {
     for (int i = 0; i < passosNecessarios; i++) {
       setStep(currentStep);
       currentStep = (currentStep + 1) % 4;
-      delay(1000); // Ajuste para velocidade desejada
+      delay(50); // Ajuste para velocidade desejada
     }
     
     // Atualiza ângulo e coleta dado
-    int valorSensor = analogRead(A0);
-    Serial.print(anguloAtual);
-    Serial.print(",");
-    Serial.println(valorSensor);
+    Serial.println(anguloAtual);
     anguloAtual += incrementoAngulo;
     
     
@@ -52,6 +50,10 @@ void loop() {
   } else {
     // Reinicia após 360°
     anguloAtual = 0;
+    contagem += 1;
+    int valorSensor = analogRead(A0);
+    Serial.print("Intensidade : ");
+    Serial.println(valorSensor);
     Serial.println("Fim do ciclo");
     delay(2000);
   }
